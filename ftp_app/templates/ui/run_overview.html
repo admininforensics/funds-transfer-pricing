@@ -1,0 +1,52 @@
+{% extends "ui/base.html" %}
+
+{% block page_subtitle %}
+  <div class="pageSubtitle">Single place to review run readiness and navigate to each stage.</div>
+{% endblock %}
+
+{% block content %}
+  <div class="grid2">
+    <div class="card">
+      <div class="cardTitle">Run summary</div>
+      <table>
+        <tbody>
+          <tr><th style="width: 180px;">Created by</th><td>{{ run.created_by }}</td></tr>
+          <tr><th>Created at</th><td>{{ run.created_at }}</td></tr>
+          <tr><th>Status</th><td><span class="pill pill--info">{{ run.status }}</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="cardTitle">Primary actions</div>
+      <div class="rowActions">
+        <a class="btn btn--disabled" href="#">Run validation (demo only)</a>
+        <a class="btn btn--disabled" href="#">Calculate (demo only)</a>
+        <a class="btn btn--disabled" href="#">Publish (demo only)</a>
+      </div>
+      <div class="pageSubtitle" style="margin-top: 10px;">Buttons are shown to validate operating flow; they do not execute logic yet.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="cardTitle">Stages</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Stage</th>
+          <th>Blueprint status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in stage_links %}
+          <tr>
+            <td>{{ s.label }}</td>
+            <td><span class="pill pill--muted">{{ s.status }}</span></td>
+            <td><a class="btn btn--ghost" href="{{ s.href }}">Open</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
+

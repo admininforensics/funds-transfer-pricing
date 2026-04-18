@@ -1,0 +1,38 @@
+{% extends "ui/base.html" %}
+
+{% block page_subtitle %}
+  <div class="pageSubtitle">Blueprint for creating a monthly FTP run (no persistence).</div>
+{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <div class="cardTitle">Run details</div>
+    <table>
+      <tbody>
+        <tr>
+          <th style="width: 180px;">Reporting month</th>
+          <td>
+            <span class="pill pill--muted">Suggested</span>
+            {% for m in suggested_months %}
+              <span class="pill">{{ m }}</span>
+            {% endfor %}
+          </td>
+        </tr>
+        <tr>
+          <th>Owner</th>
+          <td><span class="pill">Current user (demo)</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="margin-top: 12px;" class="rowActions">
+      <a class="btn btn--disabled" href="#">Create run (demo only)</a>
+      <a class="btn btn--ghost" href="/runs/">Cancel</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="cardTitle">Tip</div>
+    <div class="pageSubtitle">For the clickable demo, open the sample run from the dashboard.</div>
+  </div>
+{% endblock %}
+

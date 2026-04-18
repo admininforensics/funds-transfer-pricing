@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ app_title }}{% if page_title %} · {{ page_title }}{% endif %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'ui/app.css' %}" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand__title">{{ app_title }}</div>
+          <div class="brand__subtitle">Static workflow blueprint</div>
+        </div>
+
+        <nav class="nav">
+          {% for item in nav %}
+            <a class="nav__item {% if item.active %}nav__item--active{% endif %}" href="{{ item.href }}">
+              {{ item.label }}
+            </a>
+          {% endfor %}
+        </nav>
+      </aside>
+
+      <main class="main">
+        <header class="header">
+          <div>
+            <div class="pageTitle">{{ page_title }}</div>
+            {% block page_subtitle %}{% endblock %}
+          </div>
+          <div class="header__right">
+            {% if run %}
+              <div class="runContext">
+                <div class="runContext__row">
+                  <span class="pill">Run #{{ run.id }}</span>
+                  <span class="pill pill--muted">{{ run.month }}</span>
+                  <span class="pill pill--info">{{ run.status }}</span>
+                </div>
+                <div class="runContext__row runContext__meta">
+                  <span>Validation: <strong>{{ run.validation_state }}</strong></span>
+                  <span>Calc: <strong>{{ run.calc_state }}</strong></span>
+                  <span>Publish: <strong>{{ run.publish_state }}</strong></span>
+                </div>
+              </div>
+            {% endif %}
+          </div>
+        </header>
+
+        {% if breadcrumbs %}
+          <div class="breadcrumbs">
+            {% for b in breadcrumbs %}
+              {% if b.href %}
+                <a class="crumb" href="{{ b.href }}">{{ b.label }}</a>
+              {% else %}
+                <span class="crumb crumb--current">{{ b.label }}</span>
+              {% endif %}
+              {% if not forloop.last %}<span class="crumbSep">/</span>{% endif %}
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <section class="content">
+          {% block content %}{% endblock %}
+        </section>
+
+        <footer class="footer">
+          Demo only. No file parsing, validations, calculations, exports, or persistence.
+        </footer>
+      </main>
+    </div>
+  </body>
+</html>
+

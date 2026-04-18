@@ -1,0 +1,99 @@
+{% extends "ui/base.html" %}
+
+{% block page_subtitle %}
+  <div class="pageSubtitle">All run-blocking and warning checks surfaced before calculation.</div>
+{% endblock %}
+
+{% block content %}
+  <div class="grid2">
+    <div class="card">
+      <div class="cardTitle">Run-blocking issues</div>
+      <div class="pageSubtitle">These would prevent calculation in the real system.</div>
+      <table>
+        <thead><tr><th>Category</th><th>Items</th><th></th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Missing files</td>
+            <td>
+              {% for item in validation.missing_files %}<span class="pill pill--bad">{{ item }}</span>{% endfor %}
+            </td>
+            <td><a class="btn btn--ghost" href="/runs/{{ run.id }}/uploads/">Go to uploads</a></td>
+          </tr>
+          <tr>
+            <td>Unmatched line items</td>
+            <td>{{ validation.unmatched_line_items|length }} item(s)</td>
+            <td><a class="btn btn--ghost" href="/reference-data/">Fix in reference data</a></td>
+          </tr>
+          <tr>
+            <td>Missing assumptions</td>
+            <td>{{ validation.missing_assumptions|length }} item(s)</td>
+            <td><a class="btn btn--ghost" href="/reference-data/">Fix in reference data</a></td>
+          </tr>
+          <tr>
+            <td>Missing BS-to-IS mappings</td>
+            <td>{{ validation.missing_mappings|length }} item(s)</td>
+            <td><a class="btn btn--ghost" href="/mappings/">Fix mappings</a></td>
+          </tr>
+          <tr>
+            <td>Curve issues</td>
+            <td>{{ validation.curve_issues|length }} issue(s)</td>
+            <td><a class="btn btn--ghost" href="/curves/">Fix curves</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="cardTitle">Warnings / informational</div>
+      <div class="pageSubtitle">Shown for transparency; do not necessarily block calculation.</div>
+      <table>
+        <thead><tr><th>Type</th><th>Detail</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Missing columns</td>
+            <td>
+              {% for mc in validation.missing_columns %}
+                <div><span class="pill">{{ mc.file }}</span> missing {% for c in mc.columns %}<span class="pill pill--warn">{{ c }}</span>{% endfor %}</div>
+              {% endfor %}
+            </td>
+          </tr>
+          <tr>
+            <td>Reconciliation warnings</td>
+            <td>{% for w in validation.recon_warnings %}<div>{{ w }}</div>{% endfor %}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="cardTitle">Issue details (samples)</div>
+    <div class="grid2">
+      <div>
+        <div class="cardTitle">Unmatched line items</div>
+        <table>
+          <thead><tr><th>Minor account</th><th>Name</th></tr></thead>
+          <tbody>
+            {% for u in validation.unmatched_line_items %}
+              <tr><td>{{ u.minor_account }}</td><td>{{ u.name }}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="cardTitle">Missing assumptions</div>
+        <table>
+          <thead><tr><th>Minor account</th><th>Required</th></tr></thead>
+          <tbody>
+            {% for m in validation.missing_assumptions %}
+              <tr>
+                <td>{{ m.minor_account }}</td>
+                <td>{% for r in m.required %}<span class="pill pill--warn">{{ r }}</span>{% endfor %}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}

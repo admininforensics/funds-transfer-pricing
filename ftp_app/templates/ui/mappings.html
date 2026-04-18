@@ -1,0 +1,45 @@
+{% extends "ui/base.html" %}
+
+{% block page_subtitle %}
+  <div class="pageSubtitle">Maintain attribution between balance sheet items and P&amp;L items (splits with proportions).</div>
+{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <div class="cardTitle">Actions</div>
+    <div class="rowActions">
+      <a class="btn btn--disabled" href="#">Add mapping (demo only)</a>
+      <a class="btn btn--disabled" href="#">Validate proportions (demo only)</a>
+      <a class="btn btn--ghost" href="/runs/101/validation/">Back to validation</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="cardTitle">Mappings</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Balance sheet item</th>
+          <th>P&amp;L splits</th>
+          <th>Effective from</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for m in mappings %}
+          <tr>
+            <td><strong>{{ m.balance_sheet_item }}</strong></td>
+            <td>
+              {% for s in m.pnl_splits %}
+                <div><span class="pill">{{ s.pnl_item }}</span> <span class="pill pill--muted">{{ s.proportion }}</span></div>
+              {% endfor %}
+            </td>
+            <td>{{ m.effective_from }}</td>
+            <td><a class="btn btn--disabled" href="#">Edit split (demo only)</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
+

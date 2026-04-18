@@ -1,0 +1,48 @@
+{% extends "ui/base.html" %}
+
+{% block page_subtitle %}
+  <div class="pageSubtitle">Upload the four monthly source files. (Blueprint only; no actual upload.)</div>
+{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <div class="cardTitle">Upload</div>
+    <div class="rowActions">
+      <a class="btn btn--disabled" href="#">Drag & drop upload (demo only)</a>
+      <a class="btn btn--ghost" href="/runs/{{ run.id }}/validation/">View validation results</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="cardTitle">Required files</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Source type</th>
+          <th>Filename</th>
+          <th>Status</th>
+          <th>Uploaded at</th>
+          <th>Checksum</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for f in uploads %}
+          <tr>
+            <td>{{ f.source_type }}</td>
+            <td>{% if f.filename %}<strong>{{ f.filename }}</strong>{% else %}<span class="pill pill--muted">—</span>{% endif %}</td>
+            <td>
+              {% if f.status == "Uploaded" %}
+                <span class="badge badge--pass">Uploaded</span>
+              {% else %}
+                <span class="badge badge--fail">Missing</span>
+              {% endif %}
+            </td>
+            <td>{{ f.uploaded_at }}</td>
+            <td>{{ f.checksum }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
+

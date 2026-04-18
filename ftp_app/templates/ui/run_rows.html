@@ -1,0 +1,47 @@
+{% extends "ui/base.html" %}
+
+{% block page_subtitle %}
+  <div class="pageSubtitle">Row-level engine outputs for audit and drilldown (static sample rows).</div>
+{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <div class="cardTitle">Filters (blueprint)</div>
+    <div class="pageSubtitle">Typical filters: reporting group, currency, branch, include/exclude, missing mappings, missing assumptions.</div>
+    <div class="rowActions" style="margin-top: 10px;">
+      <a class="btn btn--disabled" href="#">Apply filters (demo only)</a>
+      <a class="btn btn--ghost" href="/runs/{{ run.id }}/results/">Back to results</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="cardTitle">Rows</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Minor account</th>
+          <th>Currency</th>
+          <th>Avg balance</th>
+          <th>Tenor days</th>
+          <th>Target rate</th>
+          <th>FTP rate</th>
+          <th>FTP interest</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in rows %}
+          <tr>
+            <td><strong>{{ r.minor_account }}</strong></td>
+            <td>{{ r.currency }}</td>
+            <td>{{ r.avg_balance }}</td>
+            <td>{{ r.tenor_days }}</td>
+            <td>{{ r.target_rate }}</td>
+            <td>{{ r.ftp_rate }}</td>
+            <td>{{ r.ftp_interest }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
+

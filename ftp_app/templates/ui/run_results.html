@@ -1,0 +1,52 @@
+{% extends "ui/base.html" %}
+
+{% block page_subtitle %}
+  <div class="pageSubtitle">Aggregated outputs and drilldown entry points (blueprint only; values are placeholders).</div>
+{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <div class="cardTitle">Actions</div>
+    <div class="rowActions">
+      <a class="btn btn--disabled" href="#">Recalculate (demo only)</a>
+      <a class="btn btn--ghost" href="/runs/{{ run.id }}/results/rows/">Row-level drilldown</a>
+      <a class="btn btn--ghost" href="/runs/{{ run.id }}/recon/">Reconciliation dashboard</a>
+      <a class="btn btn--ghost" href="/runs/{{ run.id }}/export/">Export</a>
+    </div>
+  </div>
+
+  <div class="grid4">
+    {% for k in kpis %}
+      <div class="kpi">
+        <div class="kpi__label">{{ k.label }}</div>
+        <div class="kpi__value">{{ k.value }}</div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="cardTitle">Reporting group breakdown</div>
+      <table>
+        <thead><tr><th>Group</th><th>Avg balance</th><th>FTP interest</th></tr></thead>
+        <tbody>
+          {% for r in reporting_groups %}
+            <tr><td>{{ r.group }}</td><td>{{ r.avg_balance }}</td><td>{{ r.ftp_interest }}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="cardTitle">Currency breakdown</div>
+      <table>
+        <thead><tr><th>Currency</th><th>Avg balance</th><th>FTP interest</th></tr></thead>
+        <tbody>
+          {% for r in currencies %}
+            <tr><td>{{ r.currency }}</td><td>{{ r.avg_balance }}</td><td>{{ r.ftp_interest }}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
+

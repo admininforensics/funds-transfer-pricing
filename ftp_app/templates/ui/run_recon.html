@@ -1,0 +1,48 @@
+{% extends "ui/base.html" %}
+
+{% block page_subtitle %}
+  <div class="pageSubtitle">Controls and reconciliations that build confidence in the run.</div>
+{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <div class="cardTitle">Actions</div>
+    <div class="rowActions">
+      <a class="btn btn--disabled" href="#">Run reconciliations (demo only)</a>
+      <a class="btn btn--ghost" href="/runs/{{ run.id }}/results/">Back to results</a>
+      <a class="btn btn--ghost" href="/runs/{{ run.id }}/export/">Export</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="cardTitle">Control checks</div>
+    <table>
+      <thead><tr><th>Check</th><th>Status</th><th>Detail</th></tr></thead>
+      <tbody>
+        {% for c in controls %}
+          <tr>
+            <td>{{ c.label }}</td>
+            <td>
+              {% if c.status == "Pass" %}
+                <span class="badge badge--pass">Pass</span>
+              {% elif c.status == "Warning" %}
+                <span class="badge badge--warn">Warning</span>
+              {% elif c.status == "Fail" %}
+                <span class="badge badge--fail">Fail</span>
+              {% else %}
+                <span class="badge badge--info">Info</span>
+              {% endif %}
+            </td>
+            <td>{{ c.detail }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="cardTitle">Common views (blueprint)</div>
+    <div class="pageSubtitle">Source totals vs engine totals, mapped vs unmapped rows, included vs excluded totals, actual vs target anomalies, prior month comparisons.</div>
+  </div>
+{% endblock %}
+

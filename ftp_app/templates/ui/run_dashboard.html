@@ -1,0 +1,46 @@
+{% extends "ui/base.html" %}
+
+{% block page_subtitle %}
+  <div class="pageSubtitle">Monthly runs and their workflow status. Create a new run to demo the flow.</div>
+{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <div class="cardTitle">Actions</div>
+    <div class="rowActions">
+      <a class="btn" href="/runs/new/">Create run</a>
+      <a class="btn btn--ghost" href="/runs/101/">Open sample run</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="cardTitle">Runs</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Run</th>
+          <th>Month</th>
+          <th>Status</th>
+          <th>Validation</th>
+          <th>Calculation</th>
+          <th>Publish</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in runs %}
+          <tr>
+            <td>#{{ r.id }}</td>
+            <td>{{ r.month }}</td>
+            <td><span class="pill pill--info">{{ r.status }}</span></td>
+            <td>{{ r.validation_state }}</td>
+            <td>{{ r.calc_state }}</td>
+            <td>{{ r.publish_state }}</td>
+            <td><a class="btn btn--ghost" href="/runs/{{ r.id }}/">View</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
+

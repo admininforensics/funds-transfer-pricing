@@ -1,0 +1,50 @@
+{% extends "ui/base.html" %}
+
+{% block page_subtitle %}
+  <div class="pageSubtitle">Maintain line-item FTP assumptions (bulk edit UI only).</div>
+{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <div class="cardTitle">Filters / bulk actions</div>
+    <div class="rowActions">
+      <a class="btn btn--disabled" href="#">Bulk edit (demo only)</a>
+      <a class="btn btn--disabled" href="#">Clone previous month/version (demo only)</a>
+      <a class="btn btn--ghost" href="/runs/101/validation/">Back to validation</a>
+    </div>
+    <div class="pageSubtitle" style="margin-top: 10px;">Common filters: unmatched/new items, missing tenor, missing reporting group, missing target rate.</div>
+  </div>
+
+  <div class="card">
+    <div class="cardTitle">Assumptions</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Include</th>
+          <th>Minor account</th>
+          <th>Reporting group</th>
+          <th>Target rate</th>
+          <th>Tenor #</th>
+          <th>Tenor unit</th>
+          <th>Notes</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for a in assumptions %}
+          <tr>
+            <td>{% if a.include_in_ftp %}<span class="badge badge--pass">Yes</span>{% else %}<span class="badge badge--info">No</span>{% endif %}</td>
+            <td><strong>{{ a.minor_account }}</strong></td>
+            <td>{{ a.reporting_group|default:"—" }}</td>
+            <td>{{ a.target_rate|default:"—" }}</td>
+            <td>{{ a.tenor_number|default:"—" }}</td>
+            <td>{{ a.tenor_unit|default:"—" }}</td>
+            <td>{{ a.notes|default:"" }}</td>
+            <td><a class="btn btn--disabled" href="#">Edit (demo only)</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
+
