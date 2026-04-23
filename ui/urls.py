@@ -14,8 +14,14 @@ urlpatterns = [
     path("runs/<int:run_id>/results/rows/", views.run_rows, name="run_rows"),
     path("runs/<int:run_id>/recon/", views.run_recon, name="run_recon"),
     path("runs/<int:run_id>/export/", views.run_export, name="run_export"),
+    path("inputs/", views.inputs_home, name="inputs_home"),
+    path("inputs/reporting-groups/", views.reporting_groups_list, name="reporting_groups_list"),
     path("reference-data/", views.reference_data, name="reference_data"),
+    path("reference-data/input-refdata/", views.input_refdata_list, name="input_refdata_list"),
+    path("reference-data/input-refdata/new/", views.input_refdata_new, name="input_refdata_new"),
+    path("reference-data/input-refdata/<int:row_id>/edit/", views.input_refdata_edit, name="input_refdata_edit"),
     path("mappings/", views.mappings, name="mappings"),
+    path("input-data/consolidated/", views.consolidated_data_list, name="consolidated_data_list"),
     path("curves/", views.curves, name="curves"),
 ]
 

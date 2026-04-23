@@ -1,0 +1,94 @@
+{% extends "ui/base.html" %}
+
+{% block page_subtitle %}
+  <div class="pageSubtitle">
+    Imported consolidated dataset. Paginated for performance ({{ page_size }} per page).
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <div class="cardTitle">Search</div>
+    <form method="get" class="rowActions">
+      <input name="q" value="{{ q }}" placeholder="Search MinorAccount / Trial balance name..." style="min-width: 360px;" />
+      <button class="btn" type="submit">Search</button>
+      <a class="btn btn--ghost" href="/input-data/consolidated/">Clear</a>
+    </form>
+    <div class="pageSubtitle" style="margin-top: 10px;">
+      Showing {{ rows|length }} of {{ total }} rows.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="cardTitle">Consolidated data</div>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Month</th>
+          <th>MinorAccount</th>
+          <th>Trial balance</th>
+          <th>BU</th>
+          <th>Branch</th>
+          <th>Currency</th>
+          <th>Value</th>
+          <th>TENOR</th>
+          <th>Sub-cat</th>
+          <th>Input RefData LOOKUP</th>
+          <th>ReportingGroup</th>
+          <th>Tenor Days</th>
+          <th>Target Rate</th>
+          <th>FTP Rate</th>
+          <th>Gross_Int</th>
+          <th>FTP_Int</th>
+          <th>P&amp;L Item</th>
+          <th>P&amp;L Interest</th>
+          <th>Actual Rate</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in rows %}
+          <tr>
+            <td>{{ r.row_number }}</td>
+            <td>{{ r.month_english_name }}</td>
+            <td><strong>{{ r.minor_account }}</strong></td>
+            <td style="max-width: 420px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ r.trial_balance_name }}</td>
+            <td>{{ r.business_unit_name }}</td>
+            <td>{{ r.branch_code_name }}</td>
+            <td>{{ r.currency_type }}</td>
+            <td>{{ r.value_raw }}</td>
+            <td>{{ r.tenor|default:"—" }}</td>
+            <td>{{ r.sub_cat|default:"—" }}</td>
+            <td style="max-width: 360px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ r.input_refdata_lookup|default:"—" }}</td>
+            <td>{{ r.reporting_group|default:"—" }}</td>
+            <td>{{ r.tenor_days }}</td>
+            <td>{{ r.target_rate }}</td>
+            <td>{{ r.ftp_rate }}</td>
+            <td>{{ r.gross_int }}</td>
+            <td>{{ r.ftp_int }}</td>
+            <td style="max-width: 360px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ r.pnl_item|default:"—" }}</td>
+            <td>{{ r.pnl_interest }}</td>
+            <td>{{ r.actual_rate }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="rowActions" style="margin-top: 12px;">
+      {% if has_prev %}
+        <a class="btn btn--ghost" href="/input-data/consolidated/?q={{ q }}&page={{ page|add:'-1' }}">Prev</a>
+      {% else %}
+        <a class="btn btn--disabled" href="#">Prev</a>
+      {% endif %}
+
+      <span class="pill pill--muted">Page {{ page }}</span>
+
+      {% if has_next %}
+        <a class="btn btn--ghost" href="/input-data/consolidated/?q={{ q }}&page={{ page|add:'1' }}">Next</a>
+      {% else %}
+        <a class="btn btn--disabled" href="#">Next</a>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
+

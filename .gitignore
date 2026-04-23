@@ -25,3 +25,6 @@ db.sqlite3
 
 # Excel macro workbooks (large binaries; keep local only)
 *.xlsm
+
+# Local extracted input/output data (keep local only)
+extract/

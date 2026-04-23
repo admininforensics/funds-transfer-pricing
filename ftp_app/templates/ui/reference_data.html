@@ -6,6 +6,36 @@
 
 {% block content %}
   <div class="card">
+    <div class="cardTitle">Reporting groups (imported)</div>
+    <div class="rowActions" style="margin-top: 10px;">
+      <a class="btn btn--ghost" href="/inputs/">Go to Inputs hub</a>
+      <a class="btn btn--ghost" href="/reference-data/input-refdata/">View input refdata (imported)</a>
+    </div>
+    {% if reporting_groups %}
+      <table>
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Account</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for rg in reporting_groups %}
+            <tr>
+              <td><span class="pill pill--muted">{{ rg.group_type }}</span></td>
+              <td><strong>{{ rg.account }}</strong></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <div class="emptyState">
+        No reporting groups imported yet. Run <code>python ftp_app/manage.py import_extract</code>.
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="card">
     <div class="cardTitle">Filters / bulk actions</div>
     <div class="rowActions">
       <a class="btn btn--disabled" href="#">Bulk edit (demo only)</a>

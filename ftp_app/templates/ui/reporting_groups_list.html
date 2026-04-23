@@ -1,0 +1,35 @@
+{% extends "ui/base.html" %}
+
+{% block page_subtitle %}
+  <div class="pageSubtitle">Imported reporting groups used as dropdown options for `input_refdata.ReportingGroup`.</div>
+{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <div class="cardTitle">Actions</div>
+    <div class="rowActions">
+      <a class="btn btn--ghost" href="/inputs/">Back to Inputs</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="cardTitle">Reporting groups</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Account</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for rg in reporting_groups %}
+          <tr>
+            <td><span class="pill pill--muted">{{ rg.group_type }}</span></td>
+            <td><strong>{{ rg.account }}</strong></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
+

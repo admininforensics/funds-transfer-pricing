@@ -17,9 +17,24 @@
 
         <nav class="nav">
           {% for item in nav %}
-            <a class="nav__item {% if item.active %}nav__item--active{% endif %}" href="{{ item.href }}">
-              {{ item.label }}
-            </a>
+            {% if item.children %}
+              <div class="nav__section">
+                <div class="nav__item nav__sectionTitle {% if item.active %}nav__sectionTitle--active{% endif %}">
+                  {{ item.label }}
+                </div>
+                <div class="nav__children">
+                  {% for child in item.children %}
+                    <a class="nav__child {% if child.active %}nav__child--active{% endif %}" href="{{ child.href }}">
+                      {{ child.label }}
+                    </a>
+                  {% endfor %}
+                </div>
+              </div>
+            {% else %}
+              <a class="nav__item {% if item.active %}nav__item--active{% endif %}" href="{{ item.href }}">
+                {{ item.label }}
+              </a>
+            {% endif %}
           {% endfor %}
         </nav>
       </aside>

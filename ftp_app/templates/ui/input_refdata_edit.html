@@ -1,0 +1,38 @@
+{% extends "ui/base.html" %}
+
+{% block page_subtitle %}
+  <div class="pageSubtitle">Edits will automatically recompute calculated fields.</div>
+{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <div class="cardTitle">Row context</div>
+    <div class="pageSubtitle">
+      <strong>Calculated key:</strong> {{ row.calc_key_1 }}
+    </div>
+    <div class="pageSubtitle">
+      <strong>Helper:</strong> {{ row.helper }}
+    </div>
+    <div class="pageSubtitle">
+      <strong>Reporting group:</strong> {{ row.reporting_group_imported|default:"—" }}
+    </div>
+    <div class="rowActions" style="margin-top: 10px;">
+      <a class="btn btn--ghost" href="/reference-data/input-refdata/">Back to list</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="cardTitle">Edit</div>
+    <form method="post">
+      {% csrf_token %}
+      <table>
+        {{ form.as_table }}
+      </table>
+      <div class="rowActions" style="margin-top: 12px;">
+        <button class="btn" type="submit">Save</button>
+        <a class="btn btn--ghost" href="/reference-data/input-refdata/">Cancel</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}
+

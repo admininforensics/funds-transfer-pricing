@@ -12,6 +12,18 @@
       <a class="btn btn--disabled" href="#">Validate proportions (demo only)</a>
       <a class="btn btn--ghost" href="/runs/101/validation/">Back to validation</a>
     </div>
+    <div class="pageSubtitle" style="margin-top: 10px;">
+      Showing {{ mappings|length }} of {{ mappings_count }} rows ({{ page_size }} per page).
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="cardTitle">Search</div>
+    <form method="get" class="rowActions">
+      <input name="q" value="{{ q }}" placeholder="Search Balance Sheet / Prof &amp; Loss..." style="min-width: 360px;" />
+      <button class="btn" type="submit">Search</button>
+      <a class="btn btn--ghost" href="/mappings/">Clear</a>
+    </form>
   </div>
 
   <div class="card">
@@ -19,27 +31,43 @@
     <table>
       <thead>
         <tr>
-          <th>Balance sheet item</th>
-          <th>P&amp;L splits</th>
-          <th>Effective from</th>
-          <th></th>
+          <th>Balance Sheet</th>
+          <th>Prof &amp; Loss</th>
+          <th>Asset/Liab</th>
+          <th>P&amp;L</th>
+          <th>Proportion</th>
+          <th>P&amp;L attributed</th>
         </tr>
       </thead>
       <tbody>
         {% for m in mappings %}
           <tr>
-            <td><strong>{{ m.balance_sheet_item }}</strong></td>
-            <td>
-              {% for s in m.pnl_splits %}
-                <div><span class="pill">{{ s.pnl_item }}</span> <span class="pill pill--muted">{{ s.proportion }}</span></div>
-              {% endfor %}
-            </td>
-            <td>{{ m.effective_from }}</td>
-            <td><a class="btn btn--disabled" href="#">Edit split (demo only)</a></td>
+            <td style="max-width: 520px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><strong>{{ m.balance_sheet }}</strong></td>
+            <td style="max-width: 520px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ m.prof_and_loss }}</td>
+            <td>{{ m.asset_liab_value }}</td>
+            <td>{{ m.pnl_value }}</td>
+            <td>{{ m.proportion }}</td>
+            <td>{{ m.pnl_attributed }}</td>
           </tr>
         {% endfor %}
       </tbody>
     </table>
+
+    <div class="rowActions" style="margin-top: 12px;">
+      {% if has_prev %}
+        <a class="btn btn--ghost" href="/mappings/?q={{ q }}&page={{ page|add:'-1' }}">Prev</a>
+      {% else %}
+        <a class="btn btn--disabled" href="#">Prev</a>
+      {% endif %}
+
+      <span class="pill pill--muted">Page {{ page }}</span>
+
+      {% if has_next %}
+        <a class="btn btn--ghost" href="/mappings/?q={{ q }}&page={{ page|add:'1' }}">Next</a>
+      {% else %}
+        <a class="btn btn--disabled" href="#">Next</a>
+      {% endif %}
+    </div>
   </div>
 {% endblock %}
 

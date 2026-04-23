@@ -1,0 +1,83 @@
+{% extends "ui/base.html" %}
+
+{% block page_subtitle %}
+  <div class="pageSubtitle">
+    Imported table. Paginated for performance ({{ page_size }} per page).
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <div class="cardTitle">Search</div>
+    <form method="get" class="rowActions">
+      <input name="q" value="{{ q }}" placeholder="Search in calculated key (concat fields)..." style="min-width: 360px;" />
+      <button class="btn" type="submit">Search</button>
+      <a class="btn btn--ghost" href="/reference-data/">Back</a>
+      <a class="btn" href="/reference-data/input-refdata/new/">Add row</a>
+    </form>
+    <div class="pageSubtitle" style="margin-top: 10px;">
+      Showing {{ rows|length }} of {{ total }} rows.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="cardTitle">Input refdata</div>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Assets/Liabs</th>
+          <th>MinorAccount</th>
+          <th>Name of account</th>
+          <th>Sub-cat</th>
+          <th>LCY/FCY</th>
+          <th>Reporting group</th>
+          <th>TargetRate</th>
+          <th>Tenor</th>
+          <th>TenorDays</th>
+          <th>FTP Rate</th>
+          <th>Calc key (concat)</th>
+          <th>Helper (calc key + LCY/FCY)</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in rows %}
+          <tr>
+            <td>#{{ r.id }}</td>
+            <td>{{ r.assets_liabs }}</td>
+            <td><strong>{{ r.minor_account }}</strong></td>
+            <td>{{ r.account_name }}</td>
+            <td>{{ r.sub_cat|default:"—" }}</td>
+            <td>{{ r.currency_scope }}</td>
+            <td>{{ r.reporting_group_imported|default:"—" }}</td>
+            <td>{{ r.target_rate|default:"—" }}</td>
+            <td>{{ r.tenor_number|default:"—" }} {{ r.tenor_units|default:"" }}</td>
+            <td>{{ r.tenor_days }}</td>
+            <td>{{ r.ftp_rate|default:"—" }}</td>
+            <td style="max-width: 420px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ r.calc_key_1 }}</td>
+            <td style="max-width: 420px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ r.helper }}</td>
+            <td><a class="btn btn--ghost" href="/reference-data/input-refdata/{{ r.id }}/edit/">Edit</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="rowActions" style="margin-top: 12px;">
+      {% if has_prev %}
+        <a class="btn btn--ghost" href="/reference-data/input-refdata/?q={{ q }}&page={{ page|add:'-1' }}">Prev</a>
+      {% else %}
+        <a class="btn btn--disabled" href="#">Prev</a>
+      {% endif %}
+
+      <span class="pill pill--muted">Page {{ page }}</span>
+
+      {% if has_next %}
+        <a class="btn btn--ghost" href="/reference-data/input-refdata/?q={{ q }}&page={{ page|add:'1' }}">Next</a>
+      {% else %}
+        <a class="btn btn--disabled" href="#">Next</a>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
+
