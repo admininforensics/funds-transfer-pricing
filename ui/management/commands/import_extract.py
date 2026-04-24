@@ -6,6 +6,7 @@ from pathlib import Path
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
+from ui.management.commands._log import log_data_event
 from ui.models import InputRefDataRow, ReportingGroup, _tenor_days
 
 
@@ -129,4 +130,6 @@ class Command(BaseCommand):
                 f"- input_refdata.csv: seen={ir_seen} created={ir_created} total={InputRefDataRow.objects.count()}"
             )
         )
+        log_data_event(table_key="reporting_group", action="import", row_count=ReportingGroup.objects.count())
+        log_data_event(table_key="input_refdata", action="import", row_count=InputRefDataRow.objects.count())
 

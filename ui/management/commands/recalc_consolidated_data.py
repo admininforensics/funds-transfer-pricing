@@ -6,6 +6,7 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 
 from ui.models import BsIsMapping, ConsolidatedDataRow, InputRefDataRow
+from ui.management.commands._log import log_data_event
 
 
 def _to_decimal(s: str) -> Decimal:
@@ -187,4 +188,5 @@ class Command(BaseCommand):
                 f"- bs<->is keys: {len(mapping_by_bsislookup)}"
             )
         )
+        log_data_event(table_key="consolidated_data", action="recalc", row_count=ConsolidatedDataRow.objects.count())
 

@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: funds-transfer-pricing
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt && python ftp_app/manage.py migrate && python ftp_app/manage.py collectstatic --noinput
+    startCommand: gunicorn config.wsgi:application --chdir ftp_app
+    envVars:
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com"
+      # Render will inject DATABASE_URL automatically if you attach a Postgres DB
+

@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 class ReportingGroup(models.Model):
     group_type = models.CharField(max_length=64)
@@ -150,3 +151,48 @@ class ConsolidatedDataRow(models.Model):
 
     def __str__(self) -> str:
         return f"Row {self.row_number} · {self.minor_account} · {self.currency_type}"
+
+
+class CurvePoint(models.Model):
+    class Currency(models.TextChoices):
+        LCY = "LCY", "LCY"
+        FCY = "FCY", "FCY"
+
+    class Component(models.TextChoices):
+        BASE = "BASE", "Base curve"
+        SPREAD = "SPREAD", "Liquidity spread"
+
+    currency = models.CharField(max_length=3, choices=Currency.choices)
+    component = models.CharField(max_length=10, choices=Component.choices)
+    tenor_days = models.IntegerField(db_index=True)
+    rate = models.DecimalField(max_digits=18, decimal_places=12)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["currency", "component", "tenor_days"],
+                name="uq_curve_point_currency_component_tenor",
+            )
+        ]
+        indexes = [
+            models.Index(fields=["currency", "component", "tenor_days"], name="idx_curve_point_lookup"),
+        ]
+
+    def __str__(self) -> str:
+        return f"{self.currency} {self.component} {self.tenor_days}d"
+
+
+class DataEvent(models.Model):
+    table_key = models.CharField(max_length=64, db_index=True)
+    action = models.CharField(max_length=64)
+    row_count = models.IntegerField(default=0)
+    notes = models.TextField(blank=True, default="")
+    created_at = models.DateTimeField(default=timezone.now, db_index=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["table_key", "-created_at"], name="idx_dataevent_latest"),
+        ]
+
+    def __str__(self) -> str:
+        return f"{self.table_key} · {self.action} · {self.created_at.isoformat()}"

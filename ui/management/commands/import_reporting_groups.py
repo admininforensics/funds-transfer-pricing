@@ -7,6 +7,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
 from ui.models import ReportingGroup
+from ui.management.commands._log import log_data_event
 
 
 def _read_csv(path: Path) -> list[dict[str, str]]:
@@ -64,4 +65,5 @@ class Command(BaseCommand):
                 f"- total in DB: {ReportingGroup.objects.count()}"
             )
         )
+        log_data_event(table_key="reporting_group", action="import", row_count=ReportingGroup.objects.count())
 

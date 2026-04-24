@@ -7,6 +7,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
 from ui.models import ConsolidatedDataRow
+from ui.management.commands._log import log_data_event
 
 
 def _normalize_headers(raw_headers: list[str]) -> list[str]:
@@ -112,4 +113,5 @@ class Command(BaseCommand):
                 f"- total in DB: {ConsolidatedDataRow.objects.count()}"
             )
         )
+        log_data_event(table_key="consolidated_data", action="import", row_count=ConsolidatedDataRow.objects.count())
 

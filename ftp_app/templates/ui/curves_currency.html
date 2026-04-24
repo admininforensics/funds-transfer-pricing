@@ -1,0 +1,77 @@
+{% extends "ui/base.html" %}
+
+{% block page_subtitle %}
+  <div class="pageSubtitle">Maintain curve points for {{ currency }} (base curve vs liquidity spread are separated).</div>
+{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <div class="cardTitle">Actions</div>
+    <div class="rowActions">
+      <a class="btn btn--disabled" href="#">Create curve version (demo only)</a>
+      <a class="btn btn--disabled" href="#">Lock version to month (demo only)</a>
+      <a class="btn btn--ghost" href="/runs/101/validation/">Back to validation</a>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="cardTitle">Base curve</div>
+      <div class="rowActions" style="margin-bottom: 10px;">
+        <a class="btn" href="/curves/{{ currency|lower }}/base/new/">Add base point</a>
+      </div>
+      <table class="curveTable">
+        <thead><tr><th>Tenor days</th><th>Base rate</th></tr></thead>
+        <tbody>
+          {% for p in base_points %}
+            <tr>
+              <td>{{ p.tenor_days }}</td>
+              <td>
+                {{ p.rate }}
+                <a class="btn btn--ghost" style="margin-left: 8px;" href="/curves/point/{{ p.id }}/edit/">Edit</a>
+                <form method="post" action="/curves/point/{{ p.id }}/delete/" style="display:inline;">
+                  {% csrf_token %}
+                  <button class="btn btn--ghost" type="submit">Delete</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="cardTitle">Liquidity spread</div>
+      <div class="rowActions" style="margin-bottom: 10px;">
+        <a class="btn" href="/curves/{{ currency|lower }}/spread/new/">Add spread point</a>
+      </div>
+      <table class="curveTable">
+        <thead><tr><th>Tenor days</th><th>Spread</th></tr></thead>
+        <tbody>
+          {% for p in spread_points %}
+            <tr>
+              <td>{{ p.tenor_days }}</td>
+              <td>
+                {{ p.rate }}
+                <a class="btn btn--ghost" style="margin-left: 8px;" href="/curves/point/{{ p.id }}/edit/">Edit</a>
+                <form method="post" action="/curves/point/{{ p.id }}/delete/" style="display:inline;">
+                  {% csrf_token %}
+                  <button class="btn btn--ghost" type="submit">Delete</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="cardTitle">Interpolation preview (placeholder)</div>
+    <div class="pageSubtitle">Later: validations + interpolated curve preview and derived FTP curve.</div>
+    <div class="rowActions" style="margin-top: 10px;">
+      <a class="btn btn--disabled" href="#">Preview interpolation (demo only)</a>
+    </div>
+  </div>
+{% endblock %}
+

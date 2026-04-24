@@ -120,6 +120,20 @@ table { width: 100%; border-collapse: collapse; }
 th, td { padding: 10px 10px; border-bottom: 1px solid rgba(37,52,84,0.7); text-align: left; vertical-align: top; }
 th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
 
+/* Curves: keep tenor/rate visually close (Excel-like) */
+.curveTable {
+  width: auto;
+  max-width: 420px;
+}
+.curveTable th,
+.curveTable td {
+  padding: 8px 10px;
+}
+.curveTable th:first-child,
+.curveTable td:first-child {
+  width: 120px;
+}
+
 .rowActions { display: flex; gap: 10px; flex-wrap: wrap; }
 .btn {
   display: inline-flex; align-items: center; justify-content: center;

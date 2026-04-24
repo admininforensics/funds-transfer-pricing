@@ -2,6 +2,44 @@
 
 This file is a living backlog for the prototype → parity build.
 
+## Work completed so far (summary)
+
+- **UI + navigation**
+  - Sidebar grouped nav with child sections: **Input data**, **Mappings**, **Curves**.
+  - `/runs/` now includes a **Data status** table showing latest import/recalc actions with row counts + timestamps.
+
+- **Core tables + pages (SQLite-backed)**
+  - `ReportingGroup` (from `extract/reporting_group.csv`; duplicates skipped on re-import).
+  - `InputRefDataRow` (from `extract/input_refdata.csv`) with:
+    - `lookup` and `helper = lookup + LCY/FCY` (concat, no separators).
+    - `reporting_group_imported` restricted to dropdown values from `ReportingGroup`.
+    - calculated `tenor_days` from (`tenor_number`, `tenor_units`) using 30/365 conventions.
+    - placeholder `ftp_rate` column (blank for now, will be curve-interpolated later).
+    - UI supports **add/edit rows** (`/reference-data/input-refdata/…`), paginated list.
+  - `ConsolidatedDataRow` (from `extract/data_consolidated.csv`, 11k+ rows), paginated browser at `/input-data/consolidated/`.
+    - Stores raw row in `payload` to tolerate messy CSV headers.
+    - Added calculated columns per `extract/temp_calculatedcolumns_consoldata.csv` (LOOKUP1/BSISLOOKUP/Input RefData LOOKUP, rates, interests, etc.).
+  - `BsIsMapping` (from `extract/bs_is_mapping.csv`, 4k+ rows), paginated browser at `/mappings/`.
+    - Added computed numeric columns: `asset_liab_value`, `pnl_value`, `proportion`, `pnl_attributed`.
+
+- **Curve management (DB editable)**
+  - `CurvePoint` table (currency LCY/FCY, component BASE/SPREAD, tenor_days, rate).
+  - UI pages: `/curves/lcy/` and `/curves/fcy/` with separate **Base curve** vs **Liquidity spread** sections.
+  - Add/Edit/Delete curve points via forms.
+  - Seed command from mock data: `seed_curves_from_mock`.
+
+- **Recalc / import commands**
+  - Imports:
+    - `import_extract` (reporting_group + input_refdata)
+    - `import_consolidated_data`
+    - `import_bs_is_mapping`
+    - `import_reporting_groups`
+  - Recalcs:
+    - `recalc_consolidated_data`
+    - `recalc_bs_is_mapping`
+  - **Important rule**: “first match wins” for VLOOKUP-style behavior (fixed P&L Interest mismatch by removing SUM behavior).
+  - Commands log `DataEvent` entries for the `/runs/` status dashboard.
+
 ## Current state (already done)
 
 - Django prototype running locally.

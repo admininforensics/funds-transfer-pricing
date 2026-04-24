@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from django import forms
 
-from .models import InputRefDataRow, ReportingGroup
+from .models import CurvePoint, InputRefDataRow, ReportingGroup
 
 
 class InputRefDataRowForm(forms.ModelForm):
@@ -36,4 +36,10 @@ class InputRefDataRowForm(forms.ModelForm):
             "sub_sub_cat",
             "currency_scope",
         ]
+
+
+class CurvePointForm(forms.ModelForm):
+    class Meta:
+        model = CurvePoint
+        fields = ["tenor_days", "rate"]
 

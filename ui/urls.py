@@ -23,5 +23,10 @@ urlpatterns = [
     path("mappings/", views.mappings, name="mappings"),
     path("input-data/consolidated/", views.consolidated_data_list, name="consolidated_data_list"),
     path("curves/", views.curves, name="curves"),
+    path("curves/lcy/", views.curves_lcy, name="curves_lcy"),
+    path("curves/fcy/", views.curves_fcy, name="curves_fcy"),
+    path("curves/<str:currency>/<str:component>/new/", views.curve_point_new, name="curve_point_new"),
+    path("curves/point/<int:point_id>/edit/", views.curve_point_edit, name="curve_point_edit"),
+    path("curves/point/<int:point_id>/delete/", views.curve_point_delete, name="curve_point_delete"),
 ]
 

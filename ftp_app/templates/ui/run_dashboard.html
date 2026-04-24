@@ -6,6 +6,34 @@
 
 {% block content %}
   <div class="card">
+    <div class="cardTitle">Data status (latest updates)</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Table</th>
+          <th>Last action</th>
+          <th>Rows</th>
+          <th>Last updated</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in data_status %}
+          <tr>
+            <td><strong>{{ item.label }}</strong></td>
+            {% if item.event %}
+              <td>{{ item.event.action }}</td>
+              <td>{{ item.event.row_count }}</td>
+              <td>{{ item.event.created_at }}</td>
+            {% else %}
+              <td colspan="3" class="pageSubtitle">No events logged yet</td>
+            {% endif %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
     <div class="cardTitle">Actions</div>
     <div class="rowActions">
       <a class="btn" href="/runs/new/">Create run</a>

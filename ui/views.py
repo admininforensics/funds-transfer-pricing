@@ -2,17 +2,20 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from . import mock_data
-from .forms import InputRefDataRowForm
+from .forms import CurvePointForm, InputRefDataRowForm
 from .models import InputRefDataRow
 from .models import ReportingGroup
 from .models import BsIsMapping
 from .models import ConsolidatedDataRow
+from .models import CurvePoint
+from .models import DataEvent
 
 
 def _base_context(*, request: HttpRequest, run_id: int | None = None) -> dict:
     run = mock_data.get_run(run_id) if run_id is not None else None
     in_mappings = request.path.startswith("/mappings/") or request.path.startswith("/inputs/") or request.path.startswith("/reference-data/input-refdata/")
     in_input_data = request.path.startswith("/input-data/")
+    in_curves = request.path.startswith("/curves/")
     return {
         "app_title": "FTP Demo (Blueprint UI)",
         "run": run,
@@ -35,7 +38,14 @@ def _base_context(*, request: HttpRequest, run_id: int | None = None) -> dict:
                     {"label": "Input refdata", "href": "/reference-data/input-refdata/", "active": request.path.startswith("/reference-data/input-refdata/")},
                 ],
             },
-            {"label": "Curves", "href": "/curves/", "active": request.path.startswith("/curves/")},
+            {
+                "label": "Curves",
+                "active": in_curves,
+                "children": [
+                    {"label": "LCY", "href": "/curves/lcy/", "active": request.path.startswith("/curves/lcy/")},
+                    {"label": "FCY", "href": "/curves/fcy/", "active": request.path.startswith("/curves/fcy/")},
+                ],
+            },
         ],
     }
 
@@ -49,6 +59,18 @@ def run_dashboard(request: HttpRequest) -> HttpResponse:
     ctx["page_title"] = "Run dashboard"
     ctx["breadcrumbs"] = [{"label": "Runs"}]
     ctx["runs"] = mock_data.list_runs()
+    # Monthly progress/status: latest import/recalc timestamps per key table
+    latest: dict[str, DataEvent] = {}
+    for ev in DataEvent.objects.order_by("-created_at").all()[:200]:
+        if ev.table_key not in latest:
+            latest[ev.table_key] = ev
+    ctx["data_status"] = [
+        {"label": "Reporting groups", "key": "reporting_group", "event": latest.get("reporting_group")},
+        {"label": "Input refdata", "key": "input_refdata", "event": latest.get("input_refdata")},
+        {"label": "Consolidated data", "key": "consolidated_data", "event": latest.get("consolidated_data")},
+        {"label": "BS↔IS mapping", "key": "bs_is_mapping", "event": latest.get("bs_is_mapping")},
+        {"label": "Curves", "key": "curves", "event": latest.get("curves")},
+    ]
     return render(request, "ui/run_dashboard.html", ctx)
 
 
@@ -255,11 +277,80 @@ def consolidated_data_list(request: HttpRequest) -> HttpResponse:
 
 
 def curves(request: HttpRequest) -> HttpResponse:
+    return redirect("/curves/lcy/")
+
+
+def curves_lcy(request: HttpRequest) -> HttpResponse:
     ctx = _base_context(request=request)
-    ctx["page_title"] = "Curve maintenance"
-    ctx["breadcrumbs"] = [{"label": "Curves"}]
-    ctx["curves"] = mock_data.get_curves()
-    return render(request, "ui/curves.html", ctx)
+    ctx["page_title"] = "Curves · LCY"
+    ctx["breadcrumbs"] = [{"label": "Curves"}, {"label": "LCY"}]
+    ctx["currency"] = "LCY"
+    ctx["base_points"] = CurvePoint.objects.filter(currency="LCY", component="BASE").order_by("tenor_days")
+    ctx["spread_points"] = CurvePoint.objects.filter(currency="LCY", component="SPREAD").order_by("tenor_days")
+    return render(request, "ui/curves_currency.html", ctx)
+
+
+def curves_fcy(request: HttpRequest) -> HttpResponse:
+    ctx = _base_context(request=request)
+    ctx["page_title"] = "Curves · FCY"
+    ctx["breadcrumbs"] = [{"label": "Curves"}, {"label": "FCY"}]
+    ctx["currency"] = "FCY"
+    ctx["base_points"] = CurvePoint.objects.filter(currency="FCY", component="BASE").order_by("tenor_days")
+    ctx["spread_points"] = CurvePoint.objects.filter(currency="FCY", component="SPREAD").order_by("tenor_days")
+    return render(request, "ui/curves_currency.html", ctx)
+
+
+def curve_point_new(request: HttpRequest, currency: str, component: str) -> HttpResponse:
+    currency = currency.upper()
+    component = component.upper()
+
+    ctx = _base_context(request=request)
+    ctx["page_title"] = f"Add curve point · {currency} · {component}"
+    ctx["breadcrumbs"] = [{"label": "Curves", "href": f"/curves/{currency.lower()}/"}, {"label": "Add point"}]
+
+    if request.method == "POST":
+        form = CurvePointForm(request.POST)
+        if form.is_valid():
+            point = form.save(commit=False)
+            point.currency = currency
+            point.component = component
+            point.save()
+            return redirect(f"/curves/{currency.lower()}/")
+    else:
+        form = CurvePointForm()
+
+    ctx["form"] = form
+    ctx["currency"] = currency
+    ctx["component"] = component
+    return render(request, "ui/curve_point_form.html", ctx)
+
+
+def curve_point_edit(request: HttpRequest, point_id: int) -> HttpResponse:
+    point = get_object_or_404(CurvePoint, id=point_id)
+    ctx = _base_context(request=request)
+    ctx["page_title"] = f"Edit curve point · {point.currency} · {point.component}"
+    ctx["breadcrumbs"] = [{"label": "Curves", "href": f"/curves/{point.currency.lower()}/"}, {"label": f"{point.tenor_days}d"}]
+
+    if request.method == "POST":
+        form = CurvePointForm(request.POST, instance=point)
+        if form.is_valid():
+            form.save()
+            return redirect(f"/curves/{point.currency.lower()}/")
+    else:
+        form = CurvePointForm(instance=point)
+
+    ctx["form"] = form
+    ctx["point"] = point
+    return render(request, "ui/curve_point_form.html", ctx)
+
+
+def curve_point_delete(request: HttpRequest, point_id: int) -> HttpResponse:
+    point = get_object_or_404(CurvePoint, id=point_id)
+    if request.method != "POST":
+        return redirect(f"/curves/{point.currency.lower()}/")
+    currency = point.currency
+    point.delete()
+    return redirect(f"/curves/{currency.lower()}/")
 
 
 def run_results(request: HttpRequest, run_id: int) -> HttpResponse:

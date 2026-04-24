@@ -6,6 +6,7 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 
 from ui.models import BsIsMapping, ConsolidatedDataRow
+from ui.management.commands._log import log_data_event
 
 
 def _to_decimal(s: str) -> Decimal:
@@ -68,6 +69,7 @@ class Command(BaseCommand):
             ["asset_liab_value", "pnl_value", "proportion", "pnl_attributed"],
             batch_size=1000,
         )
+        log_data_event(table_key="bs_is_mapping", action="recalc", row_count=BsIsMapping.objects.count())
 
         self.stdout.write(
             self.style.SUCCESS(
